@@ -90,7 +90,9 @@ THE SOFTWARE.
         function draw(plot, ctx){
             data = plot.getData();
             opt = plot.getOptions();
-            if(opt.series.spider.debug.active === true) { series = data[0]; }
+            if(typeof opt.series.spider.debug != 'undefined'){
+                if(opt.series.spider.debug.active === true) { series = data[0]; }
+            }
             clear(ctx);
             setupspider(ctx);
             calculateRanges();
@@ -131,7 +133,7 @@ THE SOFTWARE.
             max = max * data[0].spider.legs.legScaleMax;
             if(opt.series.spider.legMin){ min = opt.series.spider.legMin;}
             if(opt.series.spider.legMax){ max = opt.series.spider.legMax;}
-            return {min: min, max:max, range: max - min};			
+            return {min: min, max:max, range: max - min};           
         }
         function clear(ctx){
             ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
@@ -194,7 +196,7 @@ THE SOFTWARE.
                 // based on a patch from Thomasz Janik
                 var startPoint = null;
                 var breakPoint = null;
-                for (var j = 0; j < cnt; j++){	
+                for (var j = 0; j < cnt; j++){  
                     if(startPoint === null){
                         startPoint = calculateXY(cnt,j,100);
                         breakPoint = calculateXY(cnt,Math.floor(cnt/4),100);
@@ -244,7 +246,7 @@ THE SOFTWARE.
             }
             function drawScale(ctx,opt){
                 if(opt.series.spider.scaleMode !== "leg"){
-                    for(var i = 0; i <= opt.ticks; i++){	
+                    for(var i = 0; i <= opt.ticks; i++){    
                     }
                 }
             }
@@ -265,10 +267,22 @@ THE SOFTWARE.
                 ctx.fillStyle = data[0].spider.legs.fillStyle;
                 // based on patch created by Thomasz Janik
                 metrics = ctx.measureText(data[0].spider.legs.data[j].label);
-                if(pos.y > startPoint.y){ extraY = 15;} else{ extraY = -15;}
-                if(between(pos.y,startPoint.y+10,startPoint.y-10)){ extraY = 0;}
-                if(pos.x < breakPoint.x){ extraX = (metrics.width*-1)-metrics.width/2;}else{ extraX = 0;}
-                if(between(pos.x,startPoint.x+10,startPoint.x-10)) { extraX = metrics.width/2; }
+                if(pos.y > startPoint.y){ 
+                    extraY = 15;
+                }else{ 
+                    extraY = -15;
+                }
+                if(between(pos.y,startPoint.y+10,startPoint.y-10)){ 
+                    extraY = -10;
+                }
+                if(pos.x < breakPoint.x){ 
+                    extraX = -100;
+                }else{ 
+                    extraX = 0;
+                }
+                if(between(pos.x,startPoint.x+10,startPoint.x-10)) { 
+                    extraX = -metrics.width/2; 
+                }
                 ctx.fillText(data[0].spider.legs.data[j].label, pos.x + extraX, pos.y + extraY);
             }
         }
@@ -371,4 +385,4 @@ THE SOFTWARE.
         name: pluginName,
         version: pluginVersion
     });
-})(jQuery);	
+})(jQuery); 
