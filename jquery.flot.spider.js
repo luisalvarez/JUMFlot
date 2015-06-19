@@ -65,7 +65,7 @@ THE SOFTWARE.
         grid:{
             show:false,
             tickColor: "rgba(0,0,0,0.15)",
-            ticks: 5
+            ticks: 6
         }
     };
     function init(plot){
@@ -87,6 +87,21 @@ THE SOFTWARE.
                 s.nearBy.drawHover = drawHoverSpider;
             }
         }
+        var tickGenerator = function (axis,ticksSize) {
+            var ticks = [],
+                start = axis.min,
+                i = 0,
+                v = Number.NaN,
+                prev;
+
+            do {
+                prev = v;
+                v = start + i * ((axis.max-axis.min)/ticksSize);
+                ticks.push(v);
+                ++i;
+            } while (v < axis.max && v != prev);
+            return ticks;
+        };
         function draw(plot, ctx){
             data = plot.getData();
             opt = plot.getOptions();
@@ -206,13 +221,16 @@ THE SOFTWARE.
                 }
             }
             function drawGridSpider(ctx,opt){
-                var i,j;
+                var i,j,points;
                 ctx.linewidth = 1;
                 ctx.strokeStyle = opt.tickColor;
+                points = tickGenerator(data[0].yaxis,opt.ticks)
                 for(i = 0; i<= opt.ticks; i++){
                     var pos = calculateXY(cnt,0,100 / opt.ticks * i);
                     ctx.beginPath();
-                    ctx.moveTo(pos.x, pos.y);
+                    ctx.moveTo(pos.x , pos.y);
+                    ctx.fillStyle = opt.color;
+                    ctx.fillText(points[i].toFixed(2),pos.x,pos.y);
                     for(j = 1; j < cnt; j++){
                         pos = calculateXY(cnt,j,100 / opt.ticks * i);
                         ctx.lineTo(pos.x, pos.y);
@@ -244,19 +262,19 @@ THE SOFTWARE.
                         break;
                 }
             }
-            function drawScale(ctx,opt){
+            function drawScale(ctx,opt,serie){
                 if(opt.series.spider.scaleMode !== "leg"){
-                    for(var i = 0; i <= opt.ticks; i++){    
+                    for(var i = 0; i <= opt.ticks; i++){  
                     }
                 }
             }
             function drawspiderLine(ctx, j){
                 var pos;
+                pos = calculateXY(cnt,j,100);
                 ctx.beginPath();
                 ctx.lineWidth = options.series.spider.lineWidth;
                 ctx.strokeStyle = options.series.spider.lineStyle;
-                ctx.moveTo(centerTop, centerLeft);
-                pos = calculateXY(cnt,j,100);
+                ctx.moveTo(centerTop +20, centerLeft );
                 ctx.lineTo(pos.x, pos.y);
                 ctx.stroke();
             }
@@ -300,7 +318,7 @@ THE SOFTWARE.
             s = 2 * Math.PI * opt.series.spider.legs.legStartAngle / 360;
             x = centerLeft + Math.round(Math.cos(2 * Math.PI / cnt * j + s) * maxRadius * d / 100);
             y = centerTop + Math.round(Math.sin(2 * Math.PI / cnt * j + s) * maxRadius * d / 100);
-            return {x: x, y: y};
+            return {x: x+20, y: y};
         }
         function calculateFromCenter(mx,my){
             var d;
