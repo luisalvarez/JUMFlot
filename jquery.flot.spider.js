@@ -156,7 +156,10 @@ THE SOFTWARE.
         function setupspider(ctx){
             maxRadius =  Math.min(ctx.canvas.width,ctx.canvas.height)/2 * data[0].spider.spiderSize;
             centerTop = (ctx.canvas.height/2);
-            centerLeft = centerTop;
+            // patch start
+            centerLeft = (ctx.canvas.width/2);           
+            // centerLeft = centerTop;
+            // patch end
         }
         function drawspiderPoints(ctx,cnt,serie,opt){
             for(var j = 0; j < serie.data.length; j++) { drawspiderPoint(ctx,cnt,serie,j,opt); }
@@ -274,34 +277,37 @@ THE SOFTWARE.
                 ctx.beginPath();
                 ctx.lineWidth = options.series.spider.lineWidth;
                 ctx.strokeStyle = options.series.spider.lineStyle;
-                ctx.moveTo(centerTop +20, centerLeft );
+                // patch start
+                // ctx.moveTo(centerTop, centerLeft);
+                ctx.moveTo(centerLeft, centerTop);
+                // patch start
                 ctx.lineTo(pos.x, pos.y);
                 ctx.stroke();
             }
             function drawspiderLeg(ctx,j,startPoint,breakPoint,gridColor){
-                var pos,metrics,extraX,extraY;
-                pos = calculateXY(cnt,j,100);
-                ctx.font = data[0].spider.legs.font;
-                ctx.fillStyle = data[0].spider.legs.fillStyle;
-                // based on patch created by Thomasz Janik
-                metrics = ctx.measureText(data[0].spider.legs.data[j].label);
-                if(pos.y > startPoint.y){ 
-                    extraY = 15;
-                }else{ 
-                    extraY = -15;
-                }
-                if(between(pos.y,startPoint.y+10,startPoint.y-10)){ 
-                    extraY = -10;
-                }
-                if(pos.x < breakPoint.x){ 
-                    extraX = -100;
-                }else{ 
-                    extraX = 0;
-                }
-                if(between(pos.x,startPoint.x+10,startPoint.x-10)) { 
-                    extraX = -metrics.width/2; 
-                }
-                ctx.fillText(data[0].spider.legs.data[j].label, pos.x + extraX, pos.y + extraY);
+               var pos,metrics,extraX,extraY;
+               pos = calculateXY(cnt,j,100);
+               ctx.font = data[0].spider.legs.font;
+               ctx.fillStyle = data[0].spider.legs.fillStyle;
+               // based on patch created by Thomasz Janik
+               metrics = ctx.measureText(data[0].spider.legs.data[j].label);
+               if(pos.y > startPoint.y){ 
+                   extraY = 25;
+               }else{
+                   extraY = -25;
+               }
+               if(between(pos.y,startPoint.y+10,startPoint.y-10)){ 
+                   extraY = -25;
+               }
+               if(pos.x < breakPoint.x){ 
+                   extraX = -110;
+               }else{ 
+                   extraX = 10;
+               }
+               if(between(pos.x,startPoint.x+10,startPoint.x-10)) { 
+                   extraX = -metrics.width/2; 
+               }
+               ctx.fillText(data[0].spider.legs.data[j].label, pos.x + extraX, pos.y + extraY);
             }
         }
         function calculatePosition(serie,ranges,j,v){
@@ -318,7 +324,7 @@ THE SOFTWARE.
             s = 2 * Math.PI * opt.series.spider.legs.legStartAngle / 360;
             x = centerLeft + Math.round(Math.cos(2 * Math.PI / cnt * j + s) * maxRadius * d / 100);
             y = centerTop + Math.round(Math.sin(2 * Math.PI / cnt * j + s) * maxRadius * d / 100);
-            return {x: x+20, y: y};
+            return {x: x, y: y};
         }
         function calculateFromCenter(mx,my){
             var d;
