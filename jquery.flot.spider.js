@@ -157,7 +157,7 @@ THE SOFTWARE.
             maxRadius =  Math.min(ctx.canvas.width,ctx.canvas.height)/2 * data[0].spider.spiderSize;
             centerTop = (ctx.canvas.height/2);
             // patch start
-            centerLeft = (ctx.canvas.width/2);           
+            centerLeft = (ctx.canvas.width/2)-25;           
             // centerLeft = centerTop;
             // patch end
         }
